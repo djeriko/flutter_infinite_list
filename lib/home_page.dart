@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_infinite_list/bloc/post_bloc.dart';
+import 'package:flutter_infinite_list/widgets/bottom_loader.dart';
+import 'package:flutter_infinite_list/widgets/post_list_item.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,16 +30,37 @@ class _HomePageState extends State<HomePage> {
             child: CircularProgressIndicator(),
           );
         }
+        if (state is PostFailure) {
+          return Center(child: Text('failed to fetch posts'));
+        }
+        if (state is PostSuccess) {
+          if (state.posts.isEmpty) {
+            return Center(
+              child: Text('no posts'),
+            );
+          }
+          return ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return index >= state.posts.length
+                  ? BottomLoader()
+                  : PostListItem(post: state.posts[index]);
+            },
+            itemCount: state.hasReachedMax
+                ? state.posts.length
+                : state.posts.length + 1,
+            controller: _scrollController,
+          );
+        }
       },
     );
   }
-  
+
   void _onScroll() {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
-    
+
     if (maxScroll - currentScroll <= _scrollThreshold) {
-      _postBloc.add(PostFetched()); 
+      _postBloc.add(PostFetched());
     }
   }
 }

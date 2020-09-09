@@ -6,7 +6,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_infinite_list/post.dart';
+import 'package:flutter_infinite_list/models/post.dart';
 
 part 'post_event.dart';
 part 'post_state.dart';
